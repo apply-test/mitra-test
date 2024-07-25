@@ -1,0 +1,51 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model m_barang {
+  id      Int           @id @default(autoincrement())
+  kode    String        @db.VarChar(10) @unique
+  nama    String        @db.VarChar(100)
+  harga   Int
+  details t_sales_det[]
+}
+
+model m_customer {
+  id       Int        @id @default(autoincrement())
+  kode     String     @db.VarChar(10) @unique
+  nama     String     @db.VarChar(100)
+  telp     String     @db.VarChar(20)
+  sales    t_sales[]
+}
+
+model t_sales {
+  id          Int          @id @default(autoincrement())
+  kode        String       @db.VarChar(15) @unique
+  tgl         DateTime
+  cust_id     Int
+  subtotal    Int
+  diskon      Int
+  ongkir      Int
+  total_bayar Int
+  customer    m_customer   @relation(fields: [cust_id], references: [id])
+  details     t_sales_det[]
+}
+
+model t_sales_det {
+  id            Int      @id @default(autoincrement())
+  sales_id      Int
+  barang_id     Int
+  harga_bandrol Int
+  qty           Int
+  diskon_pct    Int
+  diskon_nilai  Int
+  harga_diskon  Int
+  total         Int
+  sales         t_sales  @relation(fields: [sales_id], references: [id])
+  barang        m_barang @relation(fields: [barang_id], references: [id])
+}
