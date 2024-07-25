@@ -76,7 +76,6 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const data = await request.json();
-    console.log("🚀 ~ POST ~ data:", data);
     const parsedData = salesSchema.parse(data);
 
     const { details, tgl, cust_id, ongkir, diskon } = parsedData;
