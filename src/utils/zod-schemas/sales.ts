@@ -9,6 +9,8 @@ export const salesSchema = z.object({
     required_error: "Customer harus dipilih",
     invalid_type_error: "Customer ID harus number",
   }),
+  ongkir: z.any(),
+  diskon: z.any(),
   details: z.array(
     z.object({
       barang_kode: z.string({

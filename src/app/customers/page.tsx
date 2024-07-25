@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { CustomerType } from "../types/type";
 
 export default function Customer() {
   const [customers, setCustomers] = useState([]);
@@ -50,7 +51,7 @@ export default function Customer() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {customers.map((customer, index) => (
+              {customers.map((customer: CustomerType, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium text-center">
                     {index + 1}

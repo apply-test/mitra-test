@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,20 +25,20 @@ import {
 } from "@/components/ui/table";
 import { toRupiah } from "@/utils/rupiah_format";
 import { addTransaction } from "@/actions/transaction";
-import { redirect } from "next/navigation";
 import Link from "next/link";
+import { CustomerType, FormData, Product } from "@/app/types/type";
 
 export default function AddTransaction() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     tgl: new Date(),
     cust_id: null,
     ongkir: 0,
     diskon: 0,
     details: [{ barang_kode: null, qty: 1, diskon_pct: 0 }],
   });
-  const [customers, setCustomers] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [customers, setCustomers] = useState<CustomerType[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function fetchData() {
@@ -58,17 +58,27 @@ export default function AddTransaction() {
     fetchData();
   }, []);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: Number(value),
     }));
   };
 
-  const handleDetailChange = (index, field, value) => {
+  const handleDetailChange = (
+    index: number,
+    field: keyof FormData["details"][0],
+    value: string
+  ) => {
     const newDetails = formData.details.map((detail, i) =>
-      i === index ? { ...detail, [field]: value } : detail
+      i === index
+        ? {
+            ...detail,
+            [field]:
+              field === "qty" || field === "diskon_pct" ? Number(value) : value,
+          }
+        : detail
     );
     setFormData((prev) => ({
       ...prev,
@@ -83,7 +93,7 @@ export default function AddTransaction() {
     }));
   };
 
-  const handleRemoveDetail = (index) => {
+  const handleRemoveDetail = (index: number) => {
     const newDetails = formData.details.filter((_, i) => i !== index);
     setFormData((prev) => ({
       ...prev,
@@ -91,12 +101,12 @@ export default function AddTransaction() {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const updatedDetails = formData.details.map((detail) => ({
       ...detail,
-      qty: parseInt(detail.qty, 10),
-      diskon_pct: parseInt(detail.diskon_pct, 10),
+      qty: detail.qty,
+      diskon_pct: detail.diskon_pct,
     }));
 
     const updatedFormData = {
@@ -120,7 +130,7 @@ export default function AddTransaction() {
       }
     });
 
-    const totalBayar = subTotal - formData.diskon + Number(formData.ongkir);
+    const totalBayar = subTotal - formData.diskon + formData.ongkir;
 
     return {
       subTotal,
@@ -130,7 +140,7 @@ export default function AddTransaction() {
 
   const { subTotal, totalBayar } = calculateTotals();
 
-  const handleCustomerChange = async (value) => {
+  const handleCustomerChange = async (value: string) => {
     const cust = await getCustomerByCode(value);
     setFormData((prev) => ({
       ...prev,
@@ -154,7 +164,7 @@ export default function AddTransaction() {
           <div className="col-span-3">
             <DatePicker
               selected={formData.tgl}
-              onChange={(date) => setFormData({ ...formData, tgl: date })}
+              onChange={(date: Date) => setFormData({ ...formData, tgl: date })}
             />
           </div>
         </div>
@@ -232,7 +242,7 @@ export default function AddTransaction() {
                   <TableCell className="font-medium">{index + 1}</TableCell>
                   <TableCell>
                     <Select
-                      value={detail.barang_kode}
+                      value={detail.barang_kode || ""}
                       onValueChange={(value) =>
                         handleDetailChange(index, "barang_kode", value)
                       }>

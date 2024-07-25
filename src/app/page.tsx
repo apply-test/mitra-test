@@ -14,6 +14,7 @@ import {
 import { toRupiah } from "@/utils/rupiah_format";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Sales } from "./types/type";
 
 export default function Home() {
   const [sales, setSales] = useState([]);
@@ -71,7 +72,7 @@ export default function Home() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sales.map((sale, index) => (
+              {sales.map((sale: Sales, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
                   <TableCell>{sale.kode}</TableCell>

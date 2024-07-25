@@ -67,7 +67,7 @@ export async function GET(request: Request) {
       }
     );
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify(error), {
       status: 500,
     });
   }
@@ -97,19 +97,19 @@ export async function POST(request: Request) {
         }
 
         const harga_bandrol = barang.harga;
-        const diskon_nilai = (harga_bandrol * parseFloat(diskon_pct)) / 100;
+        const diskon_nilai = (harga_bandrol * diskon_pct) / 100;
         const harga_diskon = harga_bandrol - diskon_nilai;
-        const total = harga_diskon * parseInt(qty, 10);
+        const total = harga_diskon * qty;
 
-        subtotal += harga_bandrol * parseInt(qty, 10);
-        totalDiscount += diskon_nilai * parseInt(qty, 10);
+        subtotal += harga_bandrol * qty;
+        totalDiscount += diskon_nilai * qty;
         totalPayment += total;
 
         return {
           barang_id: barang.id,
           harga_bandrol,
-          qty: parseInt(qty, 10),
-          diskon_pct: parseFloat(diskon_pct),
+          qty: qty,
+          diskon_pct: diskon_pct,
           diskon_nilai,
           harga_diskon,
           total,
@@ -147,7 +147,7 @@ export async function POST(request: Request) {
     return new Response(JSON.stringify(saleWithDetails), { status: 201 });
   } catch (error) {
     console.error(error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify(error), {
       status: 500,
     });
   }

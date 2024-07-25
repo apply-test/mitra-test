@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { getProducts } from "@/actions/product";
 import { toRupiah } from "@/utils/rupiah_format";
+import { Product } from "../types/type";
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -51,7 +52,7 @@ export default function Products() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products.map((product, index) => (
+              {products.map((product: Product, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium text-center">
                     {index + 1}
